@@ -346,7 +346,24 @@ namespace two_dims_action_pack {
         tiles.getTilesByType(tile).forEach(tLoc => {
             const s = sprites.create(sprite, kind)
             tiles.placeOnTile(s, tLoc)
-            removeTile && tiles.setTileAt(tLoc, assets.tile`blank`)
+            removeTile && tiles.setTileAt(tLoc, img`
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+`)
             s.setVelocity(vx, vy)
             s.setBounceOnWall(true)
         })
