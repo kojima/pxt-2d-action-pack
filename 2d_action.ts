@@ -108,7 +108,7 @@ namespace two_dims_action_pack {
                     if (Math.abs(sprite.vy) === 0) {
                         if (sprite.vx > 0) {
                             data.move.direction = SpriteDirection.RIGHT
-                            const attackFrameAvailable = data.attack && data.attack.rightRunFrames && data.attack.rightRunFrames.length > 0
+                            const attackFrameAvailable = data.attack && data.attack.attacking && data.attack.rightRunFrames && data.attack.rightRunFrames.length > 0
                             const frameInterval = attackFrameAvailable ? data.attack.frameInterval : data.move.frameInterval
                             const frames = attackFrameAvailable ? data.attack.rightRunFrames : data.move.rightFrames
                             if (data.move.elaspedTime - data.move.rightLastUpdated > frameInterval) {
@@ -120,7 +120,7 @@ namespace two_dims_action_pack {
                             }
                         } else if (sprite.vx < 0) {
                             data.move.direction = SpriteDirection.LEFT
-                            const attackFrameAvailable = data.attack && data.attack.leftRunFrames && data.attack.leftRunFrames.length > 0
+                            const attackFrameAvailable = data.attack && data.attack.attacking && data.attack.leftRunFrames && data.attack.leftRunFrames.length > 0
                             const frameInterval = attackFrameAvailable ? data.attack.frameInterval : data.move.frameInterval
                             const frames = attackFrameAvailable ? data.attack.leftRunFrames : data.move.leftFrames
                             if (data.move.elaspedTime - data.move.leftLastUpdated > frameInterval) {
@@ -303,13 +303,10 @@ namespace two_dims_action_pack {
         const data = spriteDicts[sprite.id] as Sprite2DActionPackData
         
         if (!data || !data.attack) return
-        //if (!data || !data.attack || data.attack.attacking) return
         
         data.attack.attacking = true
-        if (!(data.move && Math.abs(data.sprite.vx) > 0)) {
-            data.attack.lastFrame = -1
-            data.attack.lastUpdated = 0
-        }
+        data.attack.lastFrame = -1
+        data.attack.lastUpdated = 0
     }
 
     /**
