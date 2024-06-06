@@ -1,4 +1,4 @@
-// meta={"simUrl":"https://trg-arcade.userpxt.io/v1.12.53/---simulator","cdnUrl":"https://pxt.azureedge.net","version":"0.3.0","target":"arcade","targetVersion":"1.12.53","repo":"kojima/pxt-2d-action-pack"}
+// meta={"simUrl":"https://trg-arcade.userpxt.io/v1.12.53/---simulator","cdnUrl":"https://pxt.azureedge.net","version":"0.3.1","target":"arcade","targetVersion":"1.12.53","repo":"kojima/pxt-2d-action-pack"}
 // total=1337619 new=7.90% cached=86.34% other=5.76%
 (function (ectx) {
 'use strict';
@@ -456,7 +456,7 @@ const pxsim_pxtrt = pxsim.pxtrt;
 const pxsim_numops = pxsim.numops;
 
 
-function _main___P154223(s) {
+function _main___P167420(s) {
 let r0 = s.r0, step = s.pc;
 s.pc = -1;
 
@@ -924,10 +924,10 @@ switch (step) {
     s.tmp_0 = r0;
     r0 = pxsim_String__concat(s.tmp_0, "_ON_DISPLAY_UPDATE");
     globals.POST_PROCESS_HANDLERS_KEY___34319 = (r0);
-    globals.stateNamespace___151826 = ("__2d_action_pack");
+    globals.stateNamespace___165421 = ("__2d_action_pack");
     s.tmp_0 = statusbars_onZero__P31631_mk(s);
     s.tmp_0.arg0 = globals.Health___31569;
-    s.tmp_0.arg1 = two_dims_action_pack_inline__P153136;
+    s.tmp_0.arg1 = two_dims_action_pack_inline__P166721;
     s.callLocIdx = 73; s.pc = 46; return s.tmp_0;
   case 46:
     r0 = s.retval;
@@ -953,13 +953,13 @@ switch (step) {
     return leave(s, r0)
   default: oops()
 } } }
-_main___P154223.info = {"start":0,"length":0,"line":0,"column":0,"endLine":0,"endColumn":0,"fileName":"main.ts","functionName":"<main>","argumentNames":[]}
-_main___P154223.continuations = [ 42,43,44,45 ]
+_main___P167420.info = {"start":0,"length":0,"line":0,"column":0,"endLine":0,"endColumn":0,"fileName":"main.ts","functionName":"<main>","argumentNames":[]}
+_main___P167420.continuations = [ 42,43,44,45 ]
 
-function _main___P154223_mk(s) {
+function _main___P167420_mk(s) {
     checkStack(s.depth);
     return {
-        parent: s, fn: _main___P154223, depth: s.depth + 1,
+        parent: s, fn: _main___P167420, depth: s.depth + 1,
         pc: 0, retval: undefined, r0: undefined, overwrittenPC: false, lambdaArgs: null,
   tmp_0: undefined,
   tmp_1: undefined,
@@ -1498,7 +1498,7 @@ function gameOverConfig_inline__P32239_mk(s) {
 
 
 
-function two_dims_action_pack_inline__P153136(s) {
+function two_dims_action_pack_inline__P166721(s) {
 let r0 = s.r0, step = s.pc;
 s.pc = -1;
 
@@ -1508,30 +1508,30 @@ if (yieldSteps-- < 0 && maybeYield(s, step, r0) || runtime !== pxsim.runtime) re
 switch (step) {
   case 0:
 
-    s.dataKey___153138 = undefined;
-    s.handlers___153146 = undefined;
-    s.i___153155 = undefined;
-    s.handler___153161 = undefined;
-    s.sprite___153165 = undefined;
+    s.dataKey___166723 = undefined;
+    s.handlers___166731 = undefined;
+    s.i___166740 = undefined;
+    s.handler___166746 = undefined;
+    s.sprite___166750 = undefined;
     if (s.lambdaArgs) {
       s.arg0 = (s.lambdaArgs[0]);
       s.lambdaArgs = null;
     }
     r0 = pxsim_String_.mkEmpty();
     s.tmp_1 = r0;
-    if ((globals.stateNamespace___151826) && (globals.stateNamespace___151826).vtable) {
+    if ((globals.stateNamespace___165421) && (globals.stateNamespace___165421).vtable) {
     setupResume(s, 5);
-    pxsim_String__stringConv(globals.stateNamespace___151826);
+    pxsim_String__stringConv(globals.stateNamespace___165421);
     checkResumeConsumed();
     return;
-    } else { s.retval = (globals.stateNamespace___151826) + ""; }
+    } else { s.retval = (globals.stateNamespace___165421) + ""; }
   case 5:
     r0 = s.retval;
     s.tmp_2 = r0;
     r0 = pxsim_String__concat(s.tmp_1, s.tmp_2);
     s.tmp_0 = r0;
     r0 = pxsim_String__concat(s.tmp_0, "_on_hp_zero");
-    s.dataKey___153138 = (r0);
+    s.dataKey___166723 = (r0);
     s.tmp_3 = game_currentScene__P30223_mk(s);
     s.callLocIdx = 68; s.pc = 6; return s.tmp_3;
   case 6:
@@ -1539,7 +1539,7 @@ switch (step) {
     s.tmp_2 = r0;
     r0 = s.tmp_2.fields["_data"];
     s.tmp_1 = r0;
-    r0 = pxsim_pxtrt.mapGetGeneric(s.tmp_1, s.dataKey___153138);
+    r0 = pxsim_pxtrt.mapGetGeneric(s.tmp_1, s.dataKey___166723);
     s.tmp_0 = r0;
     r0 = pxsim_numops_toBool(s.tmp_0);
     if (!r0) { step = 1; continue; }
@@ -1550,58 +1550,58 @@ switch (step) {
   case 2:
     // jmp value (already in r0)
     s.tmp_4 = r0;
-    s.handlers___153146 = (s.tmp_4);
-    s.i___153155 = (0);
+    s.handlers___166731 = (s.tmp_4);
+    s.i___166740 = (0);
   case 3:
-    s.tmp_1 = r0 = s.i___153155;
-    r0 = pxsim_Array__length(s.handlers___153146);
+    s.tmp_1 = r0 = s.i___166740;
+    r0 = pxsim_Array__length(s.handlers___166731);
     s.tmp_2 = r0;
     r0 = (s.tmp_1 < s.tmp_2);
     s.tmp_0 = r0;
     r0 = pxsim_numops_toBoolDecr(s.tmp_0);
     if (!r0) { step = 4; continue; }
-    r0 = pxsim_Array__getAt(s.handlers___153146, s.i___153155);
-    s.handler___153161 = (r0);
+    r0 = pxsim_Array__getAt(s.handlers___166731, s.i___166740);
+    s.handler___166746 = (r0);
     s.tmp_0 = StatusBarSprite_spriteAttachedTo__P31580_mk(s);
     s.tmp_0.arg0 = s.arg0;
     s.callLocIdx = 70; s.pc = 7; return s.tmp_0;
   case 7:
     r0 = s.retval;
-    s.sprite___153165 = (r0);
+    s.sprite___166750 = (r0);
     s.tmp_0 = lambda_3_mk(s);
-    s.tmp_0.argL = s.handler___153161;
-    s.tmp_0.arg0 = s.sprite___153165;
-    r0 = s.sprite___153165.fields["_kind"];
+    s.tmp_0.argL = s.handler___166746;
+    s.tmp_0.arg0 = s.sprite___166750;
+    r0 = s.sprite___166750.fields["_kind"];
     s.tmp_0.arg1 = r0;
     setupLambda(s.tmp_0, s.tmp_0.argL);
     s.callLocIdx = 72; s.pc = 8; return s.tmp_0;
   case 8:
     r0 = s.retval;
-    r0 = (s.i___153155 + 1);
-    s.i___153155 = (r0);
+    r0 = (s.i___166740 + 1);
+    s.i___166740 = (r0);
     { step = 3; continue; }
   case 4:
     r0 = undefined;
     return leave(s, r0)
   default: oops()
 } } }
-two_dims_action_pack_inline__P153136.info = {"start":22548,"length":415,"line":529,"column":44,"endLine":537,"endColumn":5,"fileName":"2d_action.ts","functionName":"inline","argumentNames":["statusbar"]}
+two_dims_action_pack_inline__P166721.info = {"start":22392,"length":415,"line":524,"column":44,"endLine":532,"endColumn":5,"fileName":"2d_action.ts","functionName":"inline","argumentNames":["statusbar"]}
 
-function two_dims_action_pack_inline__P153136_mk(s) {
+function two_dims_action_pack_inline__P166721_mk(s) {
     checkStack(s.depth);
     return {
-        parent: s, fn: two_dims_action_pack_inline__P153136, depth: s.depth + 1,
+        parent: s, fn: two_dims_action_pack_inline__P166721, depth: s.depth + 1,
         pc: 0, retval: undefined, r0: undefined, overwrittenPC: false, lambdaArgs: null,
   tmp_0: undefined,
   tmp_1: undefined,
   tmp_2: undefined,
   tmp_3: undefined,
   tmp_4: undefined,
-  dataKey___153138: undefined,
-  handlers___153146: undefined,
-  i___153155: undefined,
-  handler___153161: undefined,
-  sprite___153165: undefined,
+  dataKey___166723: undefined,
+  handlers___166731: undefined,
+  i___166740: undefined,
+  handler___166746: undefined,
+  sprite___166750: undefined,
   arg0: undefined,
 } }
 
@@ -44907,7 +44907,7 @@ const sprites_BaseSpriteSayRenderer__C29483_VT = mkVTable({
   },
 });
 
-const breakpoints = setupDebugger(1, ["stateNamespace___151826"])
+const breakpoints = setupDebugger(1, ["stateNamespace___165421"])
 
-return _main___P154223
+return _main___P167420
 })
