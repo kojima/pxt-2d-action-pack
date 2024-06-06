@@ -11,11 +11,7 @@
         "main.ts",
         "README.md",
         "assets.json",
-        "2d_action.ts",
-        "images.g.jres",
-        "images.g.ts",
-        "tilemap.g.jres",
-        "tilemap.g.ts"
+        "2d_action.ts"
     ],
     "testFiles": [
         "test.ts"
