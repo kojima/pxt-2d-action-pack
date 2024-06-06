@@ -305,16 +305,11 @@ namespace two_dims_action_pack {
         if (!data || !data.attack) return
         //if (!data || !data.attack || data.attack.attacking) return
         
-        if (data.move && Math.abs(data.sprite.vx) > 0) {
-            data.move.rightLastFrame = 0
-            data.move.leftLastFrame = 0
-            data.move.rightLastUpdated = 0
-            data.move.leftLastUpdated = 0
-        }
-
         data.attack.attacking = true
-        data.attack.lastFrame = -1
-        data.attack.lastUpdated = 0
+        if (!(data.move && Math.abs(data.sprite.vx) > 0)) {
+            data.attack.lastFrame = -1
+            data.attack.lastUpdated = 0
+        }
     }
 
     /**
