@@ -1,6 +1,6 @@
 {
     "name": "pxt-2d-action-pack",
-    "version": "0.1.0",
+    "version": "0.3.3",
     "description": "",
     "dependencies": {
         "device": "*",
@@ -11,7 +11,9 @@
         "main.ts",
         "README.md",
         "assets.json",
-        "2d_action.ts"
+        "2d_action.ts",
+        "images.g.jres",
+        "images.g.ts"
     ],
     "testFiles": [
         "test.ts"
@@ -23,5 +25,5 @@
     "supportedTargets": [
         "arcade"
     ],
-    "preferredEditor": "blocksprj"
+    "preferredEditor": "tsprj"
 }

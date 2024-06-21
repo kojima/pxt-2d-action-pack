@@ -48,6 +48,8 @@ namespace two_dims_action_pack {
         lastUpdated: number,
         rightFrames: Image[],
         leftFrames: Image[],
+        rightRunFrames: Image[],
+        leftRunFrames: Image[],
         rightJumpFrames: Image[],
         leftJumpFrames: Image[]
     }
@@ -106,28 +108,38 @@ namespace two_dims_action_pack {
                     if (Math.abs(sprite.vy) === 0) {
                         if (sprite.vx > 0) {
                             data.move.direction = SpriteDirection.RIGHT
-                            if (data.move.elaspedTime - data.move.rightLastUpdated > data.move.frameInterval) {
+                            const attackFrameAvailable = data.attack && data.attack.attacking && data.attack.rightRunFrames && data.attack.rightRunFrames.length > 0
+                            const frameInterval = attackFrameAvailable ? data.attack.frameInterval : data.move.frameInterval
+                            const frames = attackFrameAvailable ? data.attack.rightRunFrames : data.move.rightFrames
+                            if (data.move.elaspedTime - data.move.rightLastUpdated > frameInterval) {
                                 data.move.rightLastUpdated = data.move.elaspedTime
-                                data.move.rightLastFrame = (data.move.rightLastFrame + 1) % data.move.rightFrames.length
-                                const image = data.move.rightFrames[data.move.rightLastFrame]
+                                data.move.rightLastFrame = (data.move.rightLastFrame + 1) % frames.length
+                                const image = frames[data.move.rightLastFrame]
                                 if (sprite.image !== image) sprite.setImage(image)
                                 data.move.currentFrames = data.move.rightFrames
                             }
                         } else if (sprite.vx < 0) {
                             data.move.direction = SpriteDirection.LEFT
-                            if (data.move.elaspedTime - data.move.leftLastUpdated > data.move.frameInterval) {
+                            const attackFrameAvailable = data.attack && data.attack.attacking && data.attack.leftRunFrames && data.attack.leftRunFrames.length > 0
+                            const frameInterval = attackFrameAvailable ? data.attack.frameInterval : data.move.frameInterval
+                            const frames = attackFrameAvailable ? data.attack.leftRunFrames : data.move.leftFrames
+                            if (data.move.elaspedTime - data.move.leftLastUpdated > frameInterval) {
                                 data.move.leftLastUpdated = data.move.elaspedTime
-                                data.move.leftLastFrame = (data.move.leftLastFrame + 1) % data.move.leftFrames.length
-                                const image = data.move.leftFrames[data.move.leftLastFrame]
+                                data.move.leftLastFrame = (data.move.leftLastFrame + 1) % frames.length
+                                const image = frames[data.move.leftLastFrame]
                                 if (sprite.image !== image) sprite.setImage(image)
                                 data.move.currentFrames = data.move.leftFrames
                             }
                         }
-                    } else if (!(data.attack && data.attack.attacking)) {
+                    } else {
                         sprite.vx > 0 && (data.move.direction = SpriteDirection.RIGHT)
                         sprite.vx < 0 && (data.move.direction = SpriteDirection.LEFT)
-                        data.move.direction == SpriteDirection.RIGHT && rightJumpImage && data.sprite.setImage(rightJumpImage)
-                        data.move.direction === SpriteDirection.LEFT && leftJumpImage && data.sprite.setImage(leftJumpImage)
+                        !(data.attack && data.attack.attacking &&
+                            data.attack.rightJumpFrames && data.attack.rightJumpFrames.length > 0) &&
+                            data.move.direction == SpriteDirection.RIGHT && rightJumpImage && data.sprite.setImage(rightJumpImage)
+                        !(data.attack && data.attack.attacking &&
+                            data.attack.leftJumpFrames && data.attack.leftJumpFrames.length > 0) &&
+                            data.move.direction === SpriteDirection.LEFT && leftJumpImage && data.sprite.setImage(leftJumpImage)
                     }
                 }
             })
@@ -176,11 +188,11 @@ namespace two_dims_action_pack {
     /**
      * 攻撃アニメーションを設定する
      */
-    //% block="攻撃アニメーションを設定する $sprite=variables_get(mySprite) 右方向 $rightFrames=animation_editor 左方向 $leftFrames=animation_editor フレーム間隔 (ms) $frameInterval=timePicker || 右ジャンプ$rightJumpFrames=animation_editor 左ジャンプ$leftJumpFrames=animation_editor"
+    //% block="攻撃アニメーションを設定する $sprite=variables_get(mySprite) 右方向 $rightFrames=animation_editor 左方向 $leftFrames=animation_editor フレーム間隔 (ms) $frameInterval=timePicker ||  右移動$rightRunFrames=animation_editor 左移動$leftRunFrames=animation_editor 右ジャンプ$rightJumpFrames=animation_editor 左ジャンプ$leftJumpFrames=animation_editor"
     //% offset.defl=0
     //% frameInterval.defl=100
     //% weight=99
-    export function setAttackAnimation(sprite: Sprite, rightFrames: Image[], leftFrames: Image[], frameInterval: number, rightJumpFrames?: Image[], leftJumpFrames?: Image[]) {
+    export function setAttackAnimation(sprite: Sprite, rightFrames: Image[], leftFrames: Image[], frameInterval: number, rightRunFrames?: Image[], leftRunFrames?: Image[], rightJumpFrames?: Image[], leftJumpFrames?: Image[]) {
         if (!sprite) return
 
         const dataKey = stateNamespace
@@ -254,6 +266,8 @@ namespace two_dims_action_pack {
             lastUpdated: 0,
             rightFrames: rightFrames,
             leftFrames: leftFrames,
+            rightRunFrames: rightRunFrames,
+            leftRunFrames: leftRunFrames,
             rightJumpFrames: rightJumpFrames,
             leftJumpFrames: leftJumpFrames
         } as AttackData
@@ -289,9 +303,7 @@ namespace two_dims_action_pack {
         const data = spriteDicts[sprite.id] as Sprite2DActionPackData
         
         if (!data || !data.attack) return
-        //if (!data || !data.attack || data.attack.attacking) return
-        //if (data.move && Math.abs(data.sprite.vx) > 0) return
-
+        
         data.attack.attacking = true
         data.attack.lastFrame = -1
         data.attack.lastUpdated = 0
@@ -336,7 +348,24 @@ namespace two_dims_action_pack {
         tiles.getTilesByType(tile).forEach(tLoc => {
             const s = sprites.create(sprite, kind)
             tiles.placeOnTile(s, tLoc)
-            removeTile && tiles.setTileAt(tLoc, assets.tile`blank`)
+            removeTile && tiles.setTileAt(tLoc, img`
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+. . . . . . . . . . . . . . . .
+`)
             s.setVelocity(vx, vy)
             s.ax = ax
             s.ay = ay
