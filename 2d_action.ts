@@ -321,24 +321,46 @@ namespace two_dims_action_pack {
     /**
      * タイル上にスプライトを生成する
      */
-    //% block="スプライト%sprite=screen_image_picker (%kind=spritekind タイプ)をタイル%tile 上に生成する || (速度 vx:%vx , vy:%vy) タイル除去 %removeTile=toggleOnOff"
+    //% block="スプライト%sprite=screen_image_picker (%kind=spritekind タイプ)をタイル%tile 上に生成する || (速度 vx:%vx , vy:%vy, 加速度 ax:%ax , ay:%ay) タイル除去 %removeTile=toggleOnOff"
     //% tile.shadow=tileset_tile_picker
     //% tile.decompileIndirectFixedInstances=true
     //% expandableArgumentMode="toggle"
     //% inlineInputMode=inline
     //% vx.defl=0
     //% vy.defl=0
+    //% ax.defl=0
+    //% ay.defl=0
     //% removeTile=true
     //% weight=95
-    export function spawnSpritesOnTiles(sprite: Image, kind: number, tile: Image, vx: number = 0, vy: number = 0, removeTile: boolean = true) {
+    export function spawnSpritesOnTiles(sprite: Image, kind: number, tile: Image, vx: number = 0, vy: number = 0, ax: number = 0, ay: number = 0, removeTile: boolean = true) {
         tiles.getTilesByType(tile).forEach(tLoc => {
             const s = sprites.create(sprite, kind)
             tiles.placeOnTile(s, tLoc)
             removeTile && tiles.setTileAt(tLoc, assets.tile`blank`)
             s.setVelocity(vx, vy)
+            s.ax = ax
+            s.ay = ay
             s.setBounceOnWall(true)
         })
     }
+
+    /**
+     * Kind単位で物理量を設定する
+     */
+    /*
+    //% block="%kind=spritekind タイプのを %value にする"
+    //% weight=93
+    export function setKindValue(kind: number, value: number) {
+        const spritesByKind = game.currentScene().spritesByKind;
+        let sprites = []:
+        if (!(kind >= 0) || !spritesByKind[kind]) sprites = [];
+        else sprites = spritesByKind[kind].sprites();
+
+        sprites.forEach((sprite) => {
+            sprite.
+        });
+    }
+    */
 
     /**
      * 2スプライト間の距離を取得する
