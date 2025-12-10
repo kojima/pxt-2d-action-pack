@@ -499,6 +499,17 @@ namespace two_dims_action_pack {
     }
 
     /**
+     * 一方のスプライトが、他方のスプライトを踏みつけているか確認する
+     */
+    //% block="%sprite1=variables_get(mySprite) が%sprite2=variables_get(mySprite2) を踏みつけている"
+    //% group="スプライト"
+    //% weight=94
+    export function doesStompOn(sprite1: Sprite, sprite2: Sprite): boolean {
+        return sprite1.vy >= 0 && sprite1.bottom <= sprite2.y;
+    }
+
+
+    /**
      * Kind単位で物理量を設定する
      */
     /*
