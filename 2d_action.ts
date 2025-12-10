@@ -19,6 +19,16 @@ namespace two_dims_action_pack {
         //% block="左"
         LEFT = 2
     }
+    enum SpriteState {
+        IDLE,
+        JUMP,
+        RUN
+    }
+
+    type AnimationData = {
+        direction: SpriteDirection,
+        state: SpriteState
+    }
 
     type AngleData = {
         direction: SpriteDirection,
@@ -62,12 +72,102 @@ namespace two_dims_action_pack {
         items?: Sprite[]
     }
 
+    function getFrame(sprite: Sprite, frame: Image[]) {
+        const res: Image[] = []
+        frame.forEach((image) => {
+            const i = image.clone()
+            if (sprite.ay < 0) i.flipY()
+            res.push(i)
+        })
+        return res
+    }
+
+    /**
+     * スプライトのアニメーションを設定する
+     */
+    //% block="アニメーションを設定する スプライト $sprite=variables_get(mySprite) アイドル右 $idleRight=animation_editor アイドル左 $idleLeft=animation_editor 間隔(ms) $idleInterval=timePicker 移動右 $runRight=animation_editor 移動左 $runLeft=animation_editor 間隔(ms) $runInterval=timePicker ジャンプ右 $jumpRight=screen_image_picker ジャンプ左 $jumpLeft=screen_image_picker"
+    //% runInterval.defl=100
+    //% group="スプライト"
+    //% weight=110
+    export function setSpriteAnimations(
+        sprite: Sprite,
+        idleRight: Image[], idleLeft: Image[], idleInterval: number,
+        runRight: Image[], runLeft: Image[], runInterval: number = 100,
+        jumpRight: Image, jumpLeft: Image) {
+        if (!sprite) return
+
+        const dataKey = stateNamespace
+
+        let spriteDicts = game.currentScene().data[dataKey]
+        if (!spriteDicts) {
+            spriteDicts = game.currentScene().data[dataKey] = {}
+        }
+
+        let data: AnimationData = spriteDicts[sprite.id]
+        if (!data) {
+            data = { direction: SpriteDirection.RIGHT, state: SpriteState.IDLE }
+            const frame = getFrame(sprite, idleRight)
+            animation.runImageAnimation(sprite, frame, idleInterval, true)
+        }
+        game.eventContext().registerFrameHandler(scene.ANIMATION_UPDATE_PRIORITY, () => {
+            const direction = data.direction
+            const state = data.state
+            if (Math.abs(sprite.vy) > 0) {  // jumping
+                if (state !== SpriteState.JUMP) {
+                    animation.stopAnimation(animation.AnimationTypes.All, sprite)
+                }
+                if (sprite.vx > 0) {
+                    data.direction = SpriteDirection.RIGHT
+                } else if (sprite.vx < 0) {
+                    data.direction = SpriteDirection.LEFT
+                }
+                if (data.direction === SpriteDirection.RIGHT) {
+                    const image = jumpRight.clone()
+                    if (sprite.ay < 0) image.flipY()
+                    sprite.setImage(image)
+                } else if (data.direction === SpriteDirection.LEFT) {
+                    const image = jumpLeft.clone()
+                    if (sprite.ay < 0) image.flipY()
+                    sprite.setImage(image)
+                }
+                data.state = SpriteState.JUMP
+            } else if (Math.abs(sprite.vx) > 0) {   // running
+                if (sprite.vx > 0 && (direction !== SpriteDirection.RIGHT || state !== SpriteState.RUN)) {
+                    const frame = getFrame(sprite, runRight)
+                    animation.runImageAnimation(sprite, frame, runInterval, true)
+                    data.direction = SpriteDirection.RIGHT
+                } else if (sprite.vx < 0 && (direction !== SpriteDirection.LEFT || state !== SpriteState.RUN)) {
+                    const frame = getFrame(sprite, runLeft)
+                    animation.runImageAnimation(sprite, frame, runInterval, true)
+                    data.direction = SpriteDirection.LEFT
+                }
+                data.state = SpriteState.RUN
+            } else if (state !== SpriteState.IDLE) {
+                const hitGround = sprite.ay > 0
+                    ? sprite.isHittingTile(CollisionDirection.Bottom)
+                    : sprite.isHittingTile(CollisionDirection.Top)
+                if (hitGround) {  // idle
+                    if (direction === SpriteDirection.RIGHT) {
+                        const frame = getFrame(sprite, idleRight)
+                        animation.runImageAnimation(sprite, frame, idleInterval, true)
+                    } else {
+                        const frame = getFrame(sprite, idleLeft)
+                        animation.runImageAnimation(sprite, frame, idleInterval, true)
+                    }
+                    data.state = SpriteState.IDLE
+                }
+            }
+            spriteDicts[sprite.id] = data
+        })
+    }
+
     /**
      * 移動アニメーションを設定する
      */
     //% block="移動アニメーションを設定する $sprite=variables_get(mySprite) 右方向 $rightFrames=animation_editor 左方向 $leftFrames=animation_editor フレーム間隔 (ms) $frameInterval=timePicker || 右アイドル$rightIdleImage=screen_image_picker 左アイドル$leftIdleImage=screen_image_picker 右ジャンプ$rightJumpImage=screen_image_picker 左ジャンプ$leftJumpImage=screen_image_picker"
     //% frameInterval.defl=100
     //% expandableArgumentMode="toggle"
+    //% group="スプライト"
     //% weight=100
     export function setMoveAnimation(sprite: Sprite, rightFrames: Image[], leftFrames: Image[], frameInterval: number, rightIdleImage?: Image, leftIdleImage?: Image, rightJumpImage?: Image, leftJumpImage?: Image) {
         if (!sprite) return
@@ -191,6 +291,7 @@ namespace two_dims_action_pack {
     //% block="攻撃アニメーションを設定する $sprite=variables_get(mySprite) 右方向 $rightFrames=animation_editor 左方向 $leftFrames=animation_editor フレーム間隔 (ms) $frameInterval=timePicker ||  右移動$rightRunFrames=animation_editor 左移動$leftRunFrames=animation_editor 右ジャンプ$rightJumpFrames=animation_editor 左ジャンプ$leftJumpFrames=animation_editor"
     //% offset.defl=0
     //% frameInterval.defl=100
+    //% group="スプライト"
     //% weight=99
     export function setAttackAnimation(sprite: Sprite, rightFrames: Image[], leftFrames: Image[], frameInterval: number, rightRunFrames?: Image[], leftRunFrames?: Image[], rightJumpFrames?: Image[], leftJumpFrames?: Image[]) {
         if (!sprite) return
@@ -290,6 +391,7 @@ namespace two_dims_action_pack {
      * 攻撃アニメーションを開始する
      */
     //% block="$sprite=variables_get(mySprite) の攻撃アニメーションを開始する"
+    //% group="スプライト"
     //% weight=98
     export function attack(sprite: Sprite) {
         if (!sprite) return
@@ -313,6 +415,7 @@ namespace two_dims_action_pack {
      * スプライトの向きを確認する
      */
     //% block="$sprite=variables_get(mySprite) が右を向いている"
+    //% group="スプライト"
     //% weight=97
     export function isSpriteTowardToRight(sprite: Sprite): boolean {
         if (!sprite) return false
@@ -329,6 +432,27 @@ namespace two_dims_action_pack {
         return data.move.direction === SpriteDirection.RIGHT
     }
 
+    /*
+     * スプライトを点滅させる 
+     */
+    //% block="スプライト %sprite を %t ミリ秒間点滅させる||点滅間隔 %interval"
+    //% sprite.shadow=variables_get
+    //% sprite.defl=mySprite
+    //% t.defl=1000
+    //% interval.defl=50
+    //% group="スプライト"
+    //% weight=96
+    export function blinkSprite(sprite: Sprite, t: number, interval?: number) {
+        let invisible = false;
+        const i = setInterval(() => {
+            invisible = !invisible;
+            sprite.setFlag(SpriteFlag.Invisible, invisible);
+        }, interval);
+        setTimeout(() => {
+            clearInterval(i);
+            sprite.setFlag(SpriteFlag.Invisible, false);
+        }, t);
+    }
 
     /**
      * タイル上にスプライトを生成する
@@ -342,7 +466,8 @@ namespace two_dims_action_pack {
     //% vy.defl=0
     //% ax.defl=0
     //% ay.defl=0
-    //% removeTile=true
+    //% removeTile.defl=true
+    //% group="スプライト"
     //% weight=95
     export function spawnSpritesOnTiles(sprite: Image, kind: number, tile: Image, vx: number = 0, vy: number = 0, ax: number = 0, ay: number = 0, removeTile: boolean = true) {
         tiles.getTilesByType(tile).forEach(tLoc => {
@@ -378,6 +503,7 @@ namespace two_dims_action_pack {
      */
     /*
     //% block="%kind=spritekind タイプのを %value にする"
+    //% group="スプライト"
     //% weight=93
     export function setKindValue(kind: number, value: number) {
         const spritesByKind = game.currentScene().spritesByKind;
@@ -395,6 +521,7 @@ namespace two_dims_action_pack {
      * 2スプライト間の距離を取得する
      */
     //% block="%sprite1=variables_get(mySprite) と%sprite2=variables_get(mySprite2) の間の距離"
+    //% group="スプライト"
     //% weight=90
     export function distanceBetween(sprite1: Sprite, sprite2: Sprite): number {
         return Math.sqrt((sprite1.x - sprite2.x) ** 2 + (sprite1.y - sprite2.y) ** 2);
@@ -424,6 +551,7 @@ namespace two_dims_action_pack {
     //% checkOutOfScreen.shadow=toggleOnOff
     //% expandableArgumentMode="toggle"
     //% inlineInputMode=inline
+    //% group="スプライト"
     //% weight=85
     export function existWallsBetween(sprite1: Sprite, sprite2: Sprite, checkOutOfScreen?: boolean): boolean {
         const scene = game.currentScene();
@@ -443,6 +571,7 @@ namespace two_dims_action_pack {
      * スプライトが他のスプライトを追跡しているか確認する
      */
     //% block="%following=variables_get(myEnemy) が%followed=variables_get(mySprite) を追跡している"
+    //% group="スプライト"
     //% weight=85
     export function isFollowingSprite(following: Sprite, followed: Sprite): boolean {
         const sc = game.currentScene();
@@ -464,6 +593,7 @@ namespace two_dims_action_pack {
     //% keepMoving.shadow=toggleOnOff
     //% expandableArgumentMode="toggle"
     //% inlineInputMode=inline
+    //% group="スプライト"
     //% weight=80
     export function stopFollowing(sprite: Sprite, keepMoving?: boolean) {
         const sc = game.currentScene();
